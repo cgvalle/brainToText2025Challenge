@@ -14,4 +14,8 @@ clear
 module load conda
 conda activate base
 
+#rm -r /home/cgvallea/brainToText2025Challenge/data
+#ln -s /mnt/workspace/cgvallea/brain /home/cgvallea/brainToText2025Challenge/data
+
+
 /mnt/workspace/cgvallea/intentionally-disabled/bin/kaggle  competitions download -c brain-to-text-25 -p /mnt/workspace/cgvallea/brain

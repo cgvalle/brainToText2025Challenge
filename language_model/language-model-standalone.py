@@ -813,8 +813,8 @@ if __name__ == "__main__":
     parser.add_argument('--opt_cache_dir', type=str, default=None, help='path to opt cache')
     parser.add_argument('--alpha', type=float, default=0.5, help='alpha value [0-1]: Higher = more weight on OPT rescore. Lower = more weight on ngram rescore')
 
-    parser.add_argument('--redis_ip', type=str, default='146.155.163.99', help='IP of the redis stream (string)')
-    parser.add_argument('--redis_port', type=int, default=6379, help='Port of the redis stream (int)')
+    parser.add_argument('--redis_ip', type=str, default='localhost', help='IP of the redis stream (string)')
+    parser.add_argument('--redis_port', type=int, default=30655, help='Port of the redis stream (int)')
     parser.add_argument('--input_stream', type=str, default="remote_lm_input", help='Input stream containing logits')
     parser.add_argument('--partial_output_stream', type=str, default="remote_lm_output_partial", help='Output stream containing partial decoded sentences')
     parser.add_argument('--final_output_stream', type=str, default="remote_lm_output_final", help='Output stream containing final decoded sentences')

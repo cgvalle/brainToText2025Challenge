@@ -158,7 +158,7 @@ for session, data in test_data.items():
 # language model inference via redis
 # make sure that the standalone language model is running on the localhost redis ip
 # see README.md for instructions on how to run the language model
-r = redis.Redis(host='localhost', port=6379, db=0)
+r = redis.Redis(host='localhost', port=30655, db=0)
 r.flushall()  # clear all streams in redis
 
 # define redis streams for the remote language model
