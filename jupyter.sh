@@ -9,6 +9,6 @@
 #SBATCH --gpus=0
 
 module load conda
-conda activate uci
+conda activate b2txt25
 
 python -m jupyter notebook --no-browser --port 30651

@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name b_train                        # Custom name
 #SBATCH -t 72:00:00                                   # Max runtime of 3 hours
-#SBATCH --nodelist=ih-condor
+#SBATCH --nodelist=ih-loica
 #SBATCH -p batch                                      # Choose partition (interactive or batch)
 #SBATCH -q batch                                      # Choose QoS, must be same as partition
 #SBATCH --cpus-per-task 10                             # Request 2 cores
@@ -13,9 +13,11 @@
 ## Load conda and activate your environment
 clear
 module load conda
+
 conda activate b2txt25
 
 
-(cd nejm-brain-to-text/model_training && python train_model.py)
+
+python train_model.py
 
 

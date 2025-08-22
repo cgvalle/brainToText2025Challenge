@@ -13,12 +13,14 @@
 ## Load conda and activate your environment
 clear
 module load conda
+module load redis
 conda activate b2txt25_lm
 
+#30655
 
-#(cd /home/cgvallea/brainToText2025Challenge/nejm-brain-to-text/language_model/runtime/server/x86 && python setup.py install)
+(redis-server  --port 30655 & echo "hi")
 
-(cd nejm-brain-to-text && python language_model/language-model-standalone.py --lm_path language_model/pretrained_language_models/openwebtext_1gram_lm_sil --do_opt --nbest 100 --acoustic_scale 0.325 --blank_penalty 90 --alpha 0.55 --gpu_number 0)
+#(cd nejm-brain-to-text && python language_model/language-model-standalone.py --lm_path language_model/pretrained_language_models/openwebtext_1gram_lm_sil --do_opt --nbest 100 --acoustic_scale 0.325 --blank_penalty 90 --alpha 0.55 --gpu_number 0)
 
 
 
