@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name b_train                        # Custom name
 #SBATCH -t 72:00:00                                   # Max runtime of 3 hours
-#SBATCH --nodelist=ih-loica
+#SBATCH --nodelist=ih-condor
 #SBATCH -p batch                                      # Choose partition (interactive or batch)
 #SBATCH -q batch                                      # Choose QoS, must be same as partition
 #SBATCH --cpus-per-task 10                             # Request 2 cores
@@ -18,6 +18,6 @@ conda activate b2txt25
 
 
 
-python train_model.py
+(cd model_training && python train_model.py)
 
 

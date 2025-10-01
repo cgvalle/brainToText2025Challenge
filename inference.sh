@@ -4,9 +4,9 @@
 #SBATCH --nodelist=ih-condor
 #SBATCH -p batch                                      # Choose partition (interactive or batch)
 #SBATCH -q batch                                      # Choose QoS, must be same as partition
-#SBATCH --cpus-per-task 4                             # Request 2 cores
-#SBATCH --mem=100G                                      # Request RAM (memory)
-#SBATCH --gpus=2                                      # Request 0 GPU
+#SBATCH --cpus-per-task 12                             # Request 2 cores
+#SBATCH --mem=80G                                      # Request RAM (memory)
+#SBATCH --gpus=1                                      # Request 0 GPU
 #SBATCH -o /mnt/workspace/%u/slurm-out/example-%j.out # Write output to this file
 #SBATCH --mail-type=END                               # Notify when it ends
 
@@ -16,11 +16,17 @@ module load conda
 module load redis
 
 
+model_path=trained_models/baseline_rnn_layers_5
+lm_path=language_model/pretrained_language_models/openwebtext_1gram_lm_sil 
+lm_path=data/n3gram
+
+
 redis-server --port 30655 &
+
 
 # Run first Python script
 /mnt/workspace/cgvallea/.conda/envs/b2txt25_lm/bin/python language_model/language-model-standalone.py \
-    --lm_path language_model/pretrained_language_models/openwebtext_1gram_lm_sil \
+    --lm_path $lm_path \
     --do_opt \
     --nbest 100 \
     --acoustic_scale 0.325 \
@@ -28,15 +34,24 @@ redis-server --port 30655 &
     --alpha 0.55 \
     --gpu_number 0 &
 
- 
+# if 3gram wait for 240 seconds
+if [[ $lm_path == *"3gram"* ]]; then
+    sleep 240
+fi
 
 (cd model_training && /mnt/workspace/cgvallea/.conda/envs/b2txt25/bin/python evaluate_model.py \
-    --model_path data/t15_pretrained_rnn_baseline/t15_pretrained_rnn_baseline \
-    --data_dir data/t15_copyTask_neuralData/hdf5_data_final \
+    --model_path $model_path \
+    --data_dir ../data/t15_copyTask_neuralData/hdf5_data_final \
     --eval_type test \
-    --gpu_number 1)
+    --gpu_number 0)
 
 
 /mnt/workspace/cgvallea/intentionally-disabled/bin/kaggle  competitions submit -c brain-to-text-25  \
-    -f data/t15_pretrained_rnn_baseline/t15_pretrained_rnn_baseline/baseline_rnn_test_predicted_sentences_20250822_114145.csv  \
-    -m "base model"
+   -f model_training/$model_path/*.csv  \
+   -m $model_path
+
+
+# /mnt/workspace/cgvallea/intentionally-disabled/bin/kaggle  competitions submit -c brain-to-text-25 -f
+
+
+
