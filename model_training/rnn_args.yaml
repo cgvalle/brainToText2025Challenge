@@ -8,7 +8,7 @@ model:
   patch_stride: 4 # stride for the input patches (4 time steps)
 
   input_network:
-    n_input_layers: 1 # number of input layers per network (one network for each day)
+    n_input_layers: 3 # number of input layers per network (one network for each day)
     input_layer_sizes:
     - 512 # size of the input layer (number of input features)
     input_trainable: true # whether the input layer is trainable
@@ -18,8 +18,8 @@ gpu_number: '0' # GPU number to use for training, formatted as a string (e.g., '
 mode: train
 use_amp: true # whether to use automatic mixed precision (AMP) for training
 
-output_dir: trained_models/baseline_rnn_layers_5_asdfasdf # directory to save the trained model and logs
-checkpoint_dir: trained_models/baseline_rnn_layers_5_asdfasdf/checkpoint # directory to save checkpoints during training
+output_dir: trained_models/time_warp # directory to save the trained model and logs
+checkpoint_dir: trained_models/time_warp/checkpoint # directory to save checkpoints during training
 init_from_checkpoint: false # whether to initialize the model from a checkpoint
 init_checkpoint_path: None # path to the checkpoint to initialize the model from, if any
 save_best_checkpoint: true # whether to save the best checkpoint based on validation metrics
@@ -68,6 +68,21 @@ dataset:
     smooth_kernel_size: 100 # size of the smoothing kernel applied to the data
     smooth_data: true # whether to smooth the data
     smooth_kernel_std: 2 # standard deviation of the smoothing kernel applied to the data
+    
+    # Data Augmentation
+    window_zeroing: false # whether to apply window zeroing augmentation
+    window_zeroing_max_size: 50 # maximum size of the window to zero out
+    window_zeroing_n_windows: 1 # number of windows to zero out
+
+    channel_scaling: false # whether to apply channel scaling augmentation
+    channel_scaling_std: 0.3 # standard deviation of the channel scaling factor
+
+    time_warp: true # whether to apply time warping augmentation
+    time_warp_per_channel: false # whether to apply time warping per channel
+
+
+
+
 
   neural_dim: 512 # dimensionality of the neural data
   batch_size: 64 # batch size for training
@@ -81,7 +96,7 @@ dataset:
   test_percentage: 0.1 # percentage of data to use for testing
   feature_subset: null # specific features to include in the dataset
 
-  dataset_dir: /home/cgvallea/brainToText2025Challenge/data/brain/t15_copyTask_neuralData/hdf5_data_final # directory containing the dataset
+  dataset_dir: /home/cgvallea/brainToText2025Challenge/data/t15_copyTask_neuralData/hdf5_data_final # directory containing the dataset
   bad_trials_dict: null # dictionary of bad trials to exclude from the dataset
   sessions: # list of sessions to include in the dataset
   - t15.2023.08.11

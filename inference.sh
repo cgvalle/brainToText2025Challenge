@@ -1,7 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name b_infe                        # Custom name
 #SBATCH -t 03:00:00                                   # Max runtime of 3 hours
-#SBATCH --nodelist=ih-condor
 #SBATCH -p batch                                      # Choose partition (interactive or batch)
 #SBATCH -q batch                                      # Choose QoS, must be same as partition
 #SBATCH --cpus-per-task 12                             # Request 2 cores
@@ -16,7 +15,7 @@ module load conda
 module load redis
 
 
-model_path=trained_models/baseline_rnn_layers_5
+model_path=trained_models/channel_scaling
 lm_path=language_model/pretrained_language_models/openwebtext_1gram_lm_sil 
 lm_path=data/n3gram
 

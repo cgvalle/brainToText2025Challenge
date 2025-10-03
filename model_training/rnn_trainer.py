@@ -11,6 +11,7 @@ import logging
 import sys
 import json
 import pickle
+import pandas as pd
 
 from dataset import BrainToTextDataset, train_test_split_indicies
 from data_augmentations import gauss_smooth
@@ -478,6 +479,7 @@ class BrainToTextDecoder_Trainer:
                 device = self.device,
                 smooth_kernel_std = self.transform_args['smooth_kernel_std'],
                 smooth_kernel_size= self.transform_args['smooth_kernel_size'],
+                augmentation = self.transform_args,
                 )
             
         
@@ -568,6 +570,20 @@ class BrainToTextDecoder_Trainer:
                         f'grad norm: {grad_norm:.2f} '
                         f'time: {train_step_duration:.3f}')
 
+
+                train_stats = {}
+                train_stats['train_losses'] = np.array(train_losses, dtype=np.float32)
+                val_stats = {}
+                val_stats['val_losses'] = np.array(val_losses, dtype=np.float32)
+                val_stats['val_PERs'] = np.array(val_PERs, dtype=np.float32)
+
+                # save as DataFrame
+                train_stats_df = pd.DataFrame(train_stats, index=range(len(train_losses)))
+                val_stats_df = pd.DataFrame(val_stats, index=range(len(val_losses)))
+                train_stats_df.to_csv(os.path.join(self.args['output_dir'], 'train_metrics.csv'))
+                val_stats_df.to_csv(os.path.join(self.args['output_dir'], 'val_metrics.csv'))
+
+
             # Incrementally run a test step
             if i % self.args['batches_per_val_step'] == 0 or i == ((self.args['num_training_batches'] - 1)):
                 self.logger.info(f"Running test after training batch: {i}")
@@ -641,6 +657,21 @@ class BrainToTextDecoder_Trainer:
         # Save final model 
         if self.args['save_final_model']:
             self.save_model_checkpoint(f'{self.args["checkpoint_dir"]}/final_checkpoint_batch_{i}', val_PERs[-1])
+
+
+
+        train_stats = {}
+        train_stats['train_losses'] = train_losses
+        val_stats = {}
+        val_stats['val_losses'] = val_losses
+        val_stats['val_PERs'] = val_PERs
+
+        # save as DataFrame
+        train_stats_df = pd.DataFrame(train_stats, index=range(len(train_losses)))
+        val_stats_df = pd.DataFrame(val_stats, index=range(len(val_losses)))
+        train_stats_df.to_csv(os.path.join(self.args['output_dir'], 'train_metrics.csv'))
+        val_stats_df.to_csv(os.path.join(self.args['output_dir'], 'val_metrics.csv'))
+
 
         train_stats = {}
         train_stats['train_losses'] = train_losses

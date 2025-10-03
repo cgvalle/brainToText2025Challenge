@@ -5,7 +5,7 @@
 #SBATCH -q interactive
 #SBATCH --cpus-per-task 2 # 2 cores
 #SBATCH -o /mnt/workspace/%u/slurm-out/example-%j.out # Write output to this file
-#SBATCH --mem=2G
+#SBATCH --mem=8G
 #SBATCH --gpus=0
 
 module load conda
