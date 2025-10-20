@@ -2,8 +2,9 @@
 #SBATCH --job-name b_train                        # Custom name
 #SBATCH -t 72:00:00                                   # Max runtime of 3 hours
 #SBATCH -p batch                                      # Choose partition (interactive or batch)
-#SBATCH -q batch                                      # Choose QoS, must be same as partition
-#SBATCH --cpus-per-task 10                             # Request 10 cores
+#SBATCH -q batch    
+#SBATCH --nodelist=ih-condor                             # Choose a specific node
+#SBATCH --cpus-per-task 20                             # Request 4 cores
 #SBATCH --mem=40G                                      # Request RAM (memory)
 #SBATCH --gpus=1                                      # Request 1 GPU
 #SBATCH -o /mnt/workspace/%u/slurm-out/example-%j.out # Write output to this file
@@ -20,3 +21,4 @@ conda activate b2txt25
 (cd model_training && python train_model.py)
 
 
+# time warp: 74571

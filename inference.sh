@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name b_infe                        # Custom name
-#SBATCH -t 03:00:00                                   # Max runtime of 3 hours
+#SBATCH -t 05:00:00                                   # Max runtime of 3 hours
 #SBATCH -p batch                                      # Choose partition (interactive or batch)
 #SBATCH -q batch                                      # Choose QoS, must be same as partition
 #SBATCH --cpus-per-task 12                             # Request 2 cores
@@ -15,7 +15,7 @@ module load conda
 module load redis
 
 
-model_path=trained_models/channel_scaling
+model_path=trained_models/time_warp
 lm_path=language_model/pretrained_language_models/openwebtext_1gram_lm_sil 
 lm_path=data/n3gram
 
@@ -33,9 +33,9 @@ redis-server --port 30655 &
     --alpha 0.55 \
     --gpu_number 0 &
 
-# if 3gram wait for 240 seconds
+# if 3gram wait for 300 seconds
 if [[ $lm_path == *"3gram"* ]]; then
-    sleep 240
+    sleep 300
 fi
 
 (cd model_training && /mnt/workspace/cgvallea/.conda/envs/b2txt25/bin/python evaluate_model.py \
@@ -46,7 +46,7 @@ fi
 
 
 /mnt/workspace/cgvallea/intentionally-disabled/bin/kaggle  competitions submit -c brain-to-text-25  \
-   -f model_training/$model_path/*.csv  \
+   -f model_training/$model_path/rnn_test_predicted_sentences.csv  \
    -m $model_path
 
 

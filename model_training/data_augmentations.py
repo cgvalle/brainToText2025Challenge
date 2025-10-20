@@ -96,7 +96,8 @@ def augment_time_warp_cosine_torch(
     orig_device = neural_features.device
     orig_dtype  = neural_features.dtype
 
-    X = neural_features.to(torch.float32)
+
+    X = neural_features.to(torch.float16)
 
     # normalizar a (B,C,T)
     if X.ndim == 2:   # (C,T)
@@ -109,10 +110,9 @@ def augment_time_warp_cosine_torch(
 
     B, C, T = X.shape
     Tdur = float(dt) * float(T - 1)
-    t = torch.linspace(0.0, Tdur, T, dtype=torch.float32, device=X.device)
+    t = torch.linspace(0.0, Tdur, T, dtype=torch.float16, device=X.device)
 
-    warped_out = torch.empty_like(X, dtype=torch.float32)
-    metas = []
+    warped_out = torch.empty_like(X, dtype=torch.float16)
 
     for b in range(B):
         k_val = float(k) if k is not None else float(torch.empty(1).uniform_(*k_range).item())
@@ -133,19 +133,12 @@ def augment_time_warp_cosine_torch(
             for c in range(C):
                 warped_out[b, c], _, _, _ = _time_warp_from_speed_1d_torch(X[b, c], t, lambda _: s)
 
-        metas.append({
-            "k": k_val,
-            "alpha": alpha,
-            "t": t,
-            "speed_profile": cosine_speed(t),
-            "t_orig": t_orig if per_channel_same_warp else None,
-            "tau": tau
-        })
+
 
     warped_out = warped_out.to(device=orig_device, dtype=orig_dtype)
     if single:
-        return warped_out[0], metas[0]
-    return warped_out, metas
+        return warped_out[0]
+    return warped_out
 
 
 
@@ -187,7 +180,7 @@ def gauss_smooth(inputs, device, smooth_kernel_std=2, smooth_kernel_size=100,  p
         # Time warping
         if augmentation['time_warp']:
             if np.random.rand() < 0.5:
-                smoothed , _ = augment_time_warp_cosine_torch(
+                smoothed = augment_time_warp_cosine_torch(
                     smoothed,
                     dt=0.02,
                     alpha=0.5,         # intensidad del warp (0<|alpha|<1)

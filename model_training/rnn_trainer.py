@@ -56,6 +56,10 @@ class BrainToTextDecoder_Trainer:
 
         self.transform_args = self.args['dataset']['data_transforms']
 
+        # delete directory if it exists
+        if os.path.exists(self.args['output_dir']) and args['mode'] == 'train':
+            os.system(f'rm -rf {self.args["output_dir"]}')
+
         # Create output directory
         if args['mode'] == 'train':
             os.makedirs(self.args['output_dir'], exist_ok=False)
@@ -367,6 +371,7 @@ class BrainToTextDecoder_Trainer:
         ''' 
         Load a training checkpoint
         '''
+
         checkpoint = torch.load(load_path, weights_only = False) # checkpoint is just a dict
 
         self.model.load_state_dict(checkpoint['model_state_dict'])
