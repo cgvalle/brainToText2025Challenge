@@ -16,6 +16,7 @@ from evaluate_model_helpers import *
 parser = argparse.ArgumentParser(description='Evaluate a pretrained RNN model on the copy task dataset.')
 parser.add_argument('--model_path', type=str, default='../data/t15_pretrained_rnn_baseline',
                     help='Path to the pretrained model directory (relative to the current working directory).')
+parser.add_argument('--checkpoint_name', type=str, default='best_checkpoint',)                    
 parser.add_argument('--data_dir', type=str, default='../data/hdf5_data_final',
                     help='Path to the dataset directory (relative to the current working directory).')
 parser.add_argument('--eval_type', type=str, default='test', choices=['val', 'test'],
@@ -69,7 +70,7 @@ model = GRUDecoder(
 )
 
 # load model weights
-checkpoint = torch.load(os.path.join(model_path, 'checkpoint/best_checkpoint'), weights_only=False)
+checkpoint = torch.load(os.path.join(model_path, f'checkpoint/{args.checkpoint_name}'), weights_only=False)
 # rename keys to not start with "module." (happens if model was saved with DataParallel)
 for key in list(checkpoint['model_state_dict'].keys()):
     checkpoint['model_state_dict'][key.replace("module.", "")] = checkpoint['model_state_dict'].pop(key)
@@ -268,7 +269,17 @@ if eval_type == 'val':
 
 
 # write predicted sentences to a csv file. put a timestamp in the filename (YYYYMMDD_HHMMSS)
-output_file = os.path.join(model_path, f'rnn_{eval_type}_predicted_sentences.csv')
+output_file = os.path.join(model_path, f'rnn_{eval_type}_predicted_sentences_{args.checkpoint_name}.csv')
 ids = [i for i in range(len(lm_results['pred_sentence']))]
 df_out = pd.DataFrame({'id': ids, 'text': lm_results['pred_sentence']})
 df_out.to_csv(output_file, index=False)
+
+
+
+with open(os.path.join(model_path, f'{eval_type}_summary.csv'), 'a') as f:
+    f.write(f"# Model path: {args.checkpoint_name}\n")
+    f.write(f'# Total True Sentence Length: {total_true_length}\n')
+    f.write(f'# Total Edit Distance: {total_edit_distance}\n')
+    if eval_type == 'val':
+        f.write(f'# Aggregate Word Error Rate (WER): {100 * total_edit_distance / total_true_length:.2f}%\n')
+    f.write('\n')

@@ -179,7 +179,7 @@ def gauss_smooth(inputs, device, smooth_kernel_std=2, smooth_kernel_size=100,  p
     if augmentation:
         # Time warping
         if augmentation['time_warp']:
-            if np.random.rand() < 0.5:
+            if np.random.rand() < 0.1:
                 smoothed = augment_time_warp_cosine_torch(
                     smoothed,
                     dt=0.02,

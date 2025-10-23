@@ -645,7 +645,7 @@ class BrainToTextDecoder_Trainer:
 
                 # Optionally save this validation checkpoint, regardless of performance
                 if self.args['save_all_val_steps']:
-                    self.save_model_checkpoint(f'{self.args["checkpoint_dir"]}/checkpoint_batch_{i}', val_metrics['avg_PER'])
+                    self.save_model_checkpoint(f'{self.args["checkpoint_dir"]}/checkpoint_batch_{i}', val_metrics['avg_PER'], val_metrics['avg_loss'])
 
                 # Early stopping 
                 if early_stopping and (val_steps_since_improvement >= early_stopping_val_steps):
@@ -661,7 +661,7 @@ class BrainToTextDecoder_Trainer:
 
         # Save final model 
         if self.args['save_final_model']:
-            self.save_model_checkpoint(f'{self.args["checkpoint_dir"]}/final_checkpoint_batch_{i}', val_PERs[-1])
+            self.save_model_checkpoint(f'{self.args["checkpoint_dir"]}/final_checkpoint_batch_{i}', val_PERs[-1], val_losses[-1] ) 
 
 
 

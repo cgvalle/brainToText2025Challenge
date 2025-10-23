@@ -4,7 +4,7 @@
 #SBATCH -p batch                                      # Choose partition (interactive or batch)
 #SBATCH -q batch    
 #SBATCH --nodelist=ih-condor                             # Choose a specific node
-#SBATCH --cpus-per-task 20                             # Request 4 cores
+#SBATCH --cpus-per-task 12                             # Request 12 cores
 #SBATCH --mem=40G                                      # Request RAM (memory)
 #SBATCH --gpus=1                                      # Request 1 GPU
 #SBATCH -o /mnt/workspace/%u/slurm-out/example-%j.out # Write output to this file
