@@ -179,7 +179,7 @@ def gauss_smooth(inputs, device, smooth_kernel_std=2, smooth_kernel_size=100,  p
     if augmentation:
         # Time warping
         if augmentation['time_warp']:
-            if np.random.rand() < 0.1:
+            if np.random.rand() < 0.2:
                 smoothed = augment_time_warp_cosine_torch(
                     smoothed,
                     dt=0.02,
@@ -190,16 +190,16 @@ def gauss_smooth(inputs, device, smooth_kernel_std=2, smooth_kernel_size=100,  p
                 )
 
         if augmentation['window_zeroing']:
-            if np.random.rand() < 0.5:
+            if np.random.rand() < 0.2:
                 win_len = np.random.randint(10, augmentation['window_zeroing_max_size'])
                 start = np.random.randint(0, T - win_len)
                 smoothed[:, :, start:start + win_len] = 0
 
         # Channel scaling
         if augmentation['channel_scaling']:
-            if np.random.rand() < 0.5:
+            if np.random.rand() < 0.2:
                 scale = np.random.normal(1.0, augmentation['channel_scaling_std'], size=(B, C, 1))
-                scale = torch.tensor(scale, dtype=torch.float32, device=device)
+                scale = torch.tensor(scale, dtype=smoothed.dtype, device=device)
                 smoothed = smoothed * scale
 
         

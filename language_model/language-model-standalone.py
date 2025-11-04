@@ -107,11 +107,13 @@ def build_opt(
         model_name,
         cache_dir=cache_dir,
         torch_dtype=torch.float16,
+        device_map='auto'
     )
 
     if device != 'cpu':
         # Move the model to the GPU
-        model = model.to(device)
+        #model = model.to(device)
+        pass
 
     # Set the model to evaluation mode
     model.eval()

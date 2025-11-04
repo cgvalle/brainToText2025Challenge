@@ -24,6 +24,7 @@ parser.add_argument('--eval_type', type=str, default='test', choices=['val', 'te
                          'If "test", ground truth is not available.')
 parser.add_argument('--csv_path', type=str, default='../data/t15_copyTaskData_description.csv',
                     help='Path to the CSV file with metadata about the dataset (relative to the current working directory).')
+parser.add_argument('--redis_port', type=int, default=30655)
 parser.add_argument('--gpu_number', type=int, default=1,
                     help='GPU number to use for RNN model inference. Set to -1 to use CPU.')
 args = parser.parse_args()
@@ -159,7 +160,7 @@ for session, data in test_data.items():
 # language model inference via redis
 # make sure that the standalone language model is running on the localhost redis ip
 # see README.md for instructions on how to run the language model
-r = redis.Redis(host='localhost', port=30655, db=0)
+r = redis.Redis(host='localhost', port=args.redis_port, db=0)
 r.flushall()  # clear all streams in redis
 
 # define redis streams for the remote language model
@@ -266,6 +267,15 @@ if eval_type == 'val':
     print(f'Total true sentence length: {total_true_length}')
     print(f'Total edit distance: {total_edit_distance}')
     print(f'Aggregate Word Error Rate (WER): {100 * total_edit_distance / total_true_length:.2f}%')
+
+    output_file = os.path.join(model_path, f'rnn_{eval_type}_details_{args.checkpoint_name}.csv')
+    ids  = [i for i in range(len(lm_results['pred_sentence']))]
+    df_out = pd.DataFrame({'id': ids, 'text': lm_results['pred_sentence'],
+                           'true_text': lm_results['true_sentence'],
+                           'edit_distance': lm_results['edit_distance'],
+                           'num_words': lm_results['num_words']})
+    df_out.to_csv(output_file, index=False)
+
 
 
 # write predicted sentences to a csv file. put a timestamp in the filename (YYYYMMDD_HHMMSS)
