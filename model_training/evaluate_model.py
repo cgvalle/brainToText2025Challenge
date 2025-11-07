@@ -287,9 +287,4 @@ df_out.to_csv(output_file, index=False)
 
 
 with open(os.path.join(model_path, f'{eval_type}_summary.csv'), 'a') as f:
-    f.write(f"# Model path: {args.checkpoint_name}\n")
-    f.write(f'# Total True Sentence Length: {total_true_length}\n')
-    f.write(f'# Total Edit Distance: {total_edit_distance}\n')
-    if eval_type == 'val':
-        f.write(f'# Aggregate Word Error Rate (WER): {100 * total_edit_distance / total_true_length:.2f}%\n')
-    f.write('\n')
+    f.write(f" {args.checkpoint_name}, {total_true_length}, {total_edit_distance}, {100 * total_edit_distance / total_true_length:.2f}\n")

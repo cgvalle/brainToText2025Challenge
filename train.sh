@@ -3,7 +3,7 @@
 #SBATCH -t 72:00:00                                   # Max runtime of 3 hours
 #SBATCH -p batch                                      # Choose partition (interactive or batch)
 #SBATCH -q batch    
-#SBATCH --nodelist=ih-loica                             # Choose a specific node
+#SBATCH --nodelist=ih-condor                             # Choose a specific node
 #SBATCH --cpus-per-task 12                             # Request 12 cores
 #SBATCH --mem=40G                                      # Request RAM (memory)
 #SBATCH --gpus=1                                      # Request 1 GPU
@@ -16,7 +16,7 @@ module load conda
 
 conda activate b2txt25
 
-export TORCHDYNAMO_VERBOSE=1 
+export CUDA_VISIBLE_DEVICES=0
 
 (cd model_training && python train_model.py)
 

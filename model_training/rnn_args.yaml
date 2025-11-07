@@ -18,8 +18,8 @@ gpu_number: '0' # GPU number to use for training, formatted as a string (e.g., '
 mode: train
 use_amp: true # whether to use automatic mixed precision (AMP) for training
 
-output_dir: /mnt/workspace/cgvallea/brain/model_weights/test # directory to save the trained model and logs
-checkpoint_dir: /mnt/workspace/cgvallea/brain/model_weights/test/checkpoint # directory to save checkpoints during training
+output_dir: /mnt/workspace/cgvallea/brain/model_weights/time_warp_001_010 # directory to save the trained model and logs
+checkpoint_dir: /mnt/workspace/cgvallea/brain/model_weights/time_warp_001_010/checkpoint # directory to save checkpoints during training
 init_from_checkpoint: true # whether to initialize the model from a checkpoint
 init_checkpoint_path: trained_models/baseline/checkpoint/best_checkpoint # path to the checkpoint to initialize the model from, if any
 save_best_checkpoint: true # whether to save the best checkpoint based on validation metrics
@@ -29,15 +29,15 @@ save_val_metrics: true # whether to save validation metrics during training
 early_stopping: false # whether to use early stopping based on validation metrics
 early_stopping_val_steps: 20 # number of validation steps to wait before stopping training if no improvement is seen
 
-num_training_batches: 40000 # number of training batches to run
+num_training_batches: 4000 # number of training batches to run
 lr_scheduler_type: cosine # type of learning rate scheduler to use
 lr_max: 0.005 # maximum learning rate for the main model
 lr_min: 0.0001 # minimum learning rate for the main model
-lr_decay_steps: 40000 # number of steps for the learning rate decay
+lr_decay_steps: 4000 # number of steps for the learning rate decay
 lr_warmup_steps: 100 # number of warmup steps for the learning rate scheduler
 lr_max_day: 0.005 # maximum learning rate for the day specific input layers
 lr_min_day: 0.0001 # minimum learning rate for the day specific input layers
-lr_decay_steps_day: 40000 # number of steps for the learning rate decay for the day specific input layers
+lr_decay_steps_day: 4000 # number of steps for the learning rate decay for the day specific input layers
 lr_warmup_steps_day: 100 # number of warmup steps for the learning rate scheduler for the day specific input layers
 
 beta0: 0.9 # beta0 parameter for the Adam optimizer
@@ -48,8 +48,8 @@ weight_decay_day: 0 # weight decay for the day specific input layers
 seed: 10 # random seed for reproducibility
 grad_norm_clip_value: 10 # gradient norm clipping value
 
-batches_per_train_log: 1000 # number of batches per training log
-batches_per_val_step: 1000 # number of batches per validation step
+batches_per_train_log: 250 # number of batches per training log
+batches_per_val_step: 250 # number of batches per validation step
 
 batches_per_save: 0 # number of batches per save
 log_individual_day_val_PER: true # whether to log individual day validation performance
@@ -70,15 +70,19 @@ dataset:
     smooth_kernel_std: 2 # standard deviation of the smoothing kernel applied to the data
     
     # Data Augmentation
-    window_zeroing: true # whether to apply window zeroing augmentation
-    window_zeroing_max_size: 50 # maximum size of the window to zero out
+    window_zeroing: false # whether to apply window zeroing augmentation
+    window_zeroing_max_size: 25 # maximum size of the window to zero out
     window_zeroing_n_windows: 1 # number of windows to zero out
 
-    channel_scaling: true # whether to apply channel scaling augmentation
+    channel_scaling: false # whether to apply channel scaling augmentation
     channel_scaling_std: 0.5 # standard deviation of the channel scaling factor
 
     time_warp: true # whether to apply time warping augmentation
     time_warp_per_channel: true # whether to apply same time warping per channel
+    time_warp_tdur: 1
+    time_warp_k_range: [0.01, 0.1] # range of k values for time warping
+
+    flip: false
 
 
 

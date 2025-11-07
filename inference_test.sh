@@ -3,6 +3,7 @@
 #SBATCH -t 12:00:00                                   # Max runtime of 4 hours
 #SBATCH -p batch                                      # Choose partition (interactive or batch)
 #SBATCH -q batch                                      # Choose QoS, must be same as partition
+#SBATCH --nodelist=ih-condor                             # Choose a specific node
 #SBATCH --cpus-per-task 4                             # Request 2 cores
 #SBATCH --mem=80G                                      # Request RAM (memory)
 #SBATCH --gpus=1                                      # Request 0 GPU
@@ -15,7 +16,7 @@ module load conda
 module load redis
 
 
-model_path=/mnt/workspace/cgvallea/brain/model_weights/window_zeroing
+model_path=/mnt/workspace/cgvallea/brain/model_weights/time_warp_001_010
 lm_path=language_model/pretrained_language_models/openwebtext_1gram_lm_sil 
 lm_path=data/n3gram
 
@@ -50,7 +51,7 @@ touch $model_path/val_summary.csv
 touch $model_path/test_summary.csv
 
 
-for i in {0..40000..1000}; do
+for i in {0..4000..250}; do
 echo "Evaluating checkpoint_batch_$i"
 (cd model_training && /mnt/workspace/cgvallea/.conda/envs/b2txt25/bin/python evaluate_model.py \
     --model_path $model_path \

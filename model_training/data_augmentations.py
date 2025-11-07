@@ -84,7 +84,8 @@ def augment_time_warp_cosine_torch(
     alpha=0.6,
     k=None,
     k_range=(1, 5),
-    per_channel_same_warp=True
+    per_channel_same_warp=True,
+    Tdur=None,
 ):
     """
     Aplica time-warp coseno s(t)=1+alpha*cos(2π k t / Tdur) conservando longitud.
@@ -109,7 +110,7 @@ def augment_time_warp_cosine_torch(
         raise ValueError("neural_features debe ser (C,T) o (B,C,T).")
 
     B, C, T = X.shape
-    Tdur = float(dt) * float(T - 1)
+    Tdur = 1 #float(dt) * float(T - 1)
     t = torch.linspace(0.0, Tdur, T, dtype=torch.float16, device=X.device)
 
     warped_out = torch.empty_like(X, dtype=torch.float16)
@@ -179,15 +180,33 @@ def gauss_smooth(inputs, device, smooth_kernel_std=2, smooth_kernel_size=100,  p
     if augmentation:
         # Time warping
         if augmentation['time_warp']:
-            if np.random.rand() < 0.2:
+            if np.random.rand() < 0.1:
+                #smoothed = torch.empty_like(smoothed)
+                #print(smoothed.shape)
+                #B, C, T = smoothed.shape
+
+                # from matplotlib import pyplot as plt
+                # fig = plt.figure()
+                # smoothed[0, 0, :] = torch.sin(torch.linspace(0, 2 * np.pi, T))
+                # orig = smoothed.clone().type(torch.float32).cpu().numpy()
+                # plt.plot(orig[0, 0, :], label='Original Signal')
                 smoothed = augment_time_warp_cosine_torch(
                     smoothed,
                     dt=0.02,
                     alpha=0.5,         # intensidad del warp (0<|alpha|<1)
-                    k=None,            # si None, samplea de k_range
-                    k_range=(0.2, 5),    # <-- aquí “la variable variable es k”
-                    per_channel_same_warp=augmentation['time_warp_per_channel']
+                    #k=0.25,            # si None, samplea de k_range
+                    k_range=augmentation['time_warp_k_range'],    # <-- aquí “la variable variable es k”
+                    per_channel_same_warp=augmentation['time_warp_per_channel'],
+                    Tdur=augmentation['time_warp_tdur'],
                 )
+                # warped = smoothed.clone().type(torch.float32).cpu().numpy()
+                # plt.plot(warped[0, 0, :], label='Time-Warped Signal')
+                # plt.title(f'{np.random.rand()}')
+                # plt.legend()
+                # plt.savefig('time_warp_example.png')
+
+
+                #adsf
 
         if augmentation['window_zeroing']:
             if np.random.rand() < 0.2:
@@ -201,6 +220,10 @@ def gauss_smooth(inputs, device, smooth_kernel_std=2, smooth_kernel_size=100,  p
                 scale = np.random.normal(1.0, augmentation['channel_scaling_std'], size=(B, C, 1))
                 scale = torch.tensor(scale, dtype=smoothed.dtype, device=device)
                 smoothed = smoothed * scale
+        
+        if augmentation['flip']:
+            if np.random.rand() < 0.1:
+                smoothed = torch.flip(smoothed, dims=[2])  # Flip along time axis
 
         
 

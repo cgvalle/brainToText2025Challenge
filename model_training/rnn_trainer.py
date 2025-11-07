@@ -23,7 +23,9 @@ torch.set_float32_matmul_precision('high') # makes float32 matmuls faster on som
 torch.backends.cudnn.deterministic = True # makes training more reproducible
 torch._dynamo.config.cache_size_limit = 64
 
+
 from rnn_model import GRUDecoder
+
 
 class BrainToTextDecoder_Trainer:
     """
