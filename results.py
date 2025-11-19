@@ -9,7 +9,7 @@ def moving_average(a, n=3):
 
 
 general_path = 'data/model_weights'
-models = ['baseline','time_warp_001_010','time_warp_00001_00010','time_warp_0001_0010']
+models = ['baseline','time_warp_001_010','time_warp_020_800', 'time_warp_010_2000']
 
 results = {}
 for model in models:

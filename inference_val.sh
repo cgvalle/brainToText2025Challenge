@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name b_val1                        # Custom name
+#SBATCH --job-name b_val                        # Custom name
 #SBATCH -t 12:00:00                                   # Max runtime of 4 hours
 #SBATCH -p batch                                      # Choose partition (interactive or batch)
 #SBATCH -q batch                                      # Choose QoS, must be same as partition
@@ -18,7 +18,7 @@ module load conda
 module load redis
 
 
-model_path=/mnt/workspace/cgvallea/brain/model_weights/time_warp_001_010
+model_path=/mnt/workspace/cgvallea/brain/model_weights/time_warp_010_2000
 lm_path=language_model/pretrained_language_models/openwebtext_1gram_lm_sil 
 lm_path=data/n3gram
 
@@ -56,7 +56,7 @@ touch $model_path/test_summary.csv
 
 
 start=$(( (SLURM_ARRAY_TASK_ID-1) * 250 ))
-end=4000
+end=10000
 step=750
 
 echo "Task $SLURM_ARRAY_TASK_ID -> start=$start, end=$end, step=$step"
