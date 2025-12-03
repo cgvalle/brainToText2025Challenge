@@ -58,6 +58,18 @@ class BrainToTextDecoder_Trainer:
 
         self.transform_args = self.args['dataset']['data_transforms']
 
+        if self.args['dir_name']:
+            self.args['output_dir'] = f"/mnt/workspace/cgvallea/brain/model_weights/{self.args['dir_name']}"
+            self.args['checkpoint_dir'] = f"/mnt/workspace/cgvallea/brain/model_weights/{self.args['dir_name']}/checkpoint"
+
+        else:
+            runs = os.listdir('/mnt/workspace/cgvallea/brain/model_weights/')
+            runs = [r for r in runs if 'run_' in r]
+            N_runs = len(runs)
+            self.args['output_dir'] = f"/mnt/workspace/cgvallea/brain/model_weights/run_{N_runs+1}"
+            self.args['checkpoint_dir'] = f"/mnt/workspace/cgvallea/brain/model_weights/run_{N_runs+1}/checkpoint"
+
+
         # delete directory if it exists
         if os.path.exists(self.args['output_dir']) and args['mode'] == 'train':
             os.system(f'rm -rf {self.args["output_dir"]}')
