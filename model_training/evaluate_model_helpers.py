@@ -89,6 +89,9 @@ def runSingleDecodingStep(x, input_layer, model, model_args, device):
     # Use autocast for efficiency
     with torch.autocast(device_type = "cuda", enabled = model_args['use_amp'], dtype = torch.bfloat16):
 
+        # float to bfloat
+
+
         x = gauss_smooth(
             inputs = x, 
             device = device,

@@ -43,6 +43,8 @@ b2txt_csv_df = pd.read_csv(args.csv_path)
 # load model args
 model_args = OmegaConf.load(os.path.join(model_path, 'checkpoint/args.yaml'))
 
+model_args['use_amp'] = False
+
 # set up gpu device
 gpu_number = args.gpu_number
 if torch.cuda.is_available() and gpu_number >= 0:

@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name results
 #SBATCH -t 03:00:00 # Time limit (D-HH:MM:SS)
-#SBATCH -p batch
-#SBATCH -q batch
+#SBATCH -p interactive
+#SBATCH -q interactive
 #SBATCH --cpus-per-task 1 # 2 cores
 #SBATCH -o /mnt/workspace/%u/slurm-out/example-%j.out # Write output to this file
 #SBATCH --mem=1G

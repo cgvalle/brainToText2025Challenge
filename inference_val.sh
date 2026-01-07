@@ -18,12 +18,11 @@ module load conda
 module load redis
 
 
-model_path=/mnt/workspace/cgvallea/brain/model_weights/time_warp_010_2000
+model_path=/mnt/workspace/cgvallea/brain/model_weights/run_2
 lm_path=language_model/pretrained_language_models/openwebtext_1gram_lm_sil 
-lm_path=data/n3gram
+#lm_path=data/n3gram
 
 port=$((30652 + SLURM_ARRAY_TASK_ID))
-
 
 
 redis-server --port $port &
@@ -55,34 +54,16 @@ touch $model_path/val_summary.csv
 touch $model_path/test_summary.csv
 
 
-start=$(( (SLURM_ARRAY_TASK_ID-1) * 250 ))
-end=10000
-step=750
 
-echo "Task $SLURM_ARRAY_TASK_ID -> start=$start, end=$end, step=$step"
-
-for (( i=start; i<=end; i+=step )); do
-  sleep "$SLURM_ARRAY_TASK_ID"   # (optional) beware: task 0 sleeps 0s
-  echo "Evaluating checkpoint_batch_$i"
-  full_path=$model_path/rnn_val_predicted_sentences_checkpoint_batch_$i.csv
-  echo "Full path: $full_path"
-
-  # if path exists skip
-    if [ -f "$full_path" ]; then
-        echo "File $full_path exists. Skipping evaluation for checkpoint_batch_$i."
-        continue
-    fi
 
 (cd model_training && /mnt/workspace/cgvallea/.conda/envs/b2txt25/bin/python evaluate_model.py \
     --model_path $model_path \
-    --checkpoint_name checkpoint_batch_$i \
+    --checkpoint_name best_checkpoint$i \
     --data_dir ../data/t15_copyTask_neuralData/hdf5_data_final \
     --eval_type val \
     --redis_port $port \
     --gpu_number 0)
 
-
-done
 
 
 #/mnt/workspace/cgvallea/intentionally-disabled/bin/kaggle  competitions submit -c brain-to-text-25  \
@@ -91,6 +72,4 @@ done
 
 
 # /mnt/workspace/cgvallea/intentionally-disabled/bin/kaggle  competitions submit -c brain-to-text-25 -f
-
-
 
